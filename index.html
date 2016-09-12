@@ -811,6 +811,26 @@ res1: Option[Coordinates] = Some(Coordinates(-1204620568,0,掑὏꺒))</code></p
 				</section>
 
 				<section>
+				  <h1>scalacheck-datetime</h1>
+
+				  <p class="fragment">A library for using sensible dates with ScalaCheck</p>
+
+				  <pre class="fragment"><code class="nohighlight">scala> val now = ZonedDateTime.now
+now: java.time.ZonedDateTime = 2016-09-01T10:31:40.801+01:00[Europe/London]
+
+scala> val generator = genDateTimeWithinRange(now, Duration.ofDays(7))
+generator: org.scalacheck.Gen[java.time.ZonedDateTime] =
+                                      org.scalacheck.Gen$$anon$5@34781a0f
+
+scala> (1 to 3).foreach(_ => println(generator.sample))
+Some(2016-09-06T06:48:42.275+01:00[Europe/London])
+Some(2016-09-05T03:20:26.826+01:00[Europe/London])
+Some(2016-09-06T06:06:35.392+01:00[Europe/London])</code></pre>
+
+				  <p class="fragment">See more at <a href="https://47deg.github.io/scalacheck-datetime/">https://47deg.github.io/scalacheck-datetime</a></p>
+				</section>
+
+				<section>
 				  <h1>Thank You</h1>
 				  
 				  <h4>Useful links</h4>
