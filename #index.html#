@@ -1,4 +1,4 @@
-<!doctype html>
+!doctype html>
 <html lang="en">
 
 	<head>
@@ -54,9 +54,9 @@
 				  <ul>
 				    <li>Brief introduction</li>
 				    <li>The important classes in ScalaCheck</li>
-				    <li>Boilerplate reduction</li>
 				    <li>Writing properties</li>
 				    <li>Tips and techniques</li>
+				    <li>Boilerplate reduction</li>
 				  </ul>
 
 				</section>
@@ -82,14 +82,7 @@ prop: org.scalacheck.Prop = Prop
 + OK, passed 100 tests.</pre></code>
                                   <br/>
                                   <p class="fragment">Also works out-of-the-box with SBT</p>
-                                  <p class="fragment">This presentation is using raw ScalaCheck, there are a few minor differences when using with ScalaTest and other frameworks</p>
-                                </section>
-                                <section>
-  				  <aside class="notes">
-				    <ul>
-				      <li>You don't need to make sure bools always return T or F, or a UInt is always +ve</li>
-				      <li>Things that can't be encoded in the types in Scala, like monad laws</li>
-				      <li>Convo: have you thought about this, what about that input etc</li>
+                                </Sectionq have you thought about this, what about that input etc</li>
 				    </ul>
 				  </aside>
 				  <h2>Introducing ScalaCheck</h2>
@@ -309,70 +302,8 @@ res1: Option[Record] = Some(Record(vpwmFseQRubujRridyQ))</code></pre>
 				  </ul>
 				</section>
 
-				<section>
-				  <h1>Boilerplate Reduction</h1>
-				</section>
 
 				<section>
-				  <h2>Removing Arbitraries</h2>
-				 
-				  <h4>Using scalacheck-shapeless</h4>
-				  <p class="fragment">
-				    We can use Shapeless's automatic typeclass derivation:
-				  </p>
-				  <pre class="fragment"><code class="nohighlight">"com.github.alexarchambault"
-             %% "scalacheck-shapeless_1.15" % "1.3.0"</code></pre>
-				</section>
-
-				<section>
-				  <h2>Using scalacheck-shapeless</h2>
-				 
-				  <h4>Full example</h4>
-				  <pre class="fragment"><code class="nohighlight">> test:console
-[info] Starting scala interpreter...
-[info]
-Welcome to sbt 1.5.3 (AdoptOpenJDK Java 12.0.1)
-Type in expressions to have them evaluated.
-Type :help for more information.
-
-scala> case class Coordinates(x: Int, y: Int, description: String)
-defined class Coordinates
-
-scala> import org.scalacheck.Shapeless._
-import org.scalacheck.Shapeless._
-
-scala> import org.scalacheck.Arbitrary._
-import org.scalacheck.Arbitrary._</code></pre>
-				</section>
-
-				<section>
-				  <h2>Using scalacheck-shapeless</h2>
-				  
-				  <h4>Full example</h4>
-<pre class="fragment"><code class="nohighlight">scala> arbitrary[Coordinates].sample
-res0: Option[Coordinates] = Some(Coordinates(0,537278256,쪗ܘ暎))
-
-scala> arbitrary[Coordinates].sample
-res1: Option[Coordinates] = Some(Coordinates(-1204620568,0,掑὏꺒))</code></pre>
-				</section>
-
-				<section>
-				  <h2>Using scalacheck-shapeless</h2>
-				
-				  <p>
-				    This can derive <i>any</i> <code>Arbitrary[A]</code> as long as:
-				    <ul>
-				      <li class="fragment"><code>A</code> is a case class or sealed trait family of case classes</li>
-				      <li class="fragment">An implicit <code>Arbitrary</code> can be summoned for <code>A</code>'s constituent parts <i class="fragment">through automatic derivation or otherwise</i></li>
-				    </ul>
-				  </p>
-				  <p class="fragment">
-				    But beware: compile times can dramatically increase!
-				  </p>
-				</section>
-
-
-									<section>
 				  <aside class="notes">
 				    <ul>
 				      <li>This is generally where people fall down in getting the most value from Scalacheck</li>
@@ -382,53 +313,258 @@ res1: Option[Coordinates] = Some(Coordinates(-1204620568,0,掑὏꺒))</code></p
 				  <h1>Designing Properties</h1>
 				</section>
 
-<section>
-	<h2>Don't generate function inputs</h2>
-	<p class="fragment">Instead, aim to generate <i>what you need to derive your input and output</i></p>
-</section>
+				<section>
+				  <aside class="notes">
+				    <ul>
+				      <li>Not actually the real rules</li>
+				    </ul>
+				  </aside>
 
-<section>
-	<h2>Designing Properties</h2>
-	<h4 class="fragment">An example: Swapping elements in a list</h4>
-	<pre class="fragment"><code class="nohighlight">def swap[A](list: List[A], i1: Int, i2: Int) = ???</code></pre>
+				  <h2>Scenario: Yahtzee game</h2>
+				  <p>
+				    Have a better "hand" of five dice than your opponent
+				  </p>
+				  <div class="fragment" style="text-align: left">
+				    Yahtzee
+				    <img src="img/Dice-2.svg" width="30" class="plain"/>
+				    <img src="img/Dice-2.svg" width="30" class="plain"/>
+				    <img src="img/Dice-2.svg" width="30" class="plain"/>
+				    <img src="img/Dice-2.svg" width="30" class="plain"/>
+				    <img src="img/Dice-2.svg" width="30" class="plain"/>
+				    <br/>
+				    Straight
+				    <img src="img/Dice-1.svg" width="30" class="plain"/>
+				    <img src="img/Dice-2.svg" width="30" class="plain"/>
+				    <img src="img/Dice-3.svg" width="30" class="plain"/>
+				    <img src="img/Dice-4.svg" width="30" class="plain"/>
+				    <img src="img/Dice-5.svg" width="30" class="plain"/>
+				    <br/>
+				    Full house
+				    <img src="img/Dice-1.svg" width="30" class="plain"/>
+				    <img src="img/Dice-1.svg" width="30" class="plain"/>
+				    <img src="img/Dice-1.svg" width="30" class="plain"/>
+				    <img src="img/Dice-5.svg" width="30" class="plain"/>
+				    <img src="img/Dice-5.svg" width="30" class="plain"/>
+				    <br/>
+				    Four of a kind
+				    <img src="img/Dice-4.svg" width="30" class="plain"/>
+				    <img src="img/Dice-4.svg" width="30" class="plain"/>
+				    <img src="img/Dice-4.svg" width="30" class="plain"/>
+				    <img src="img/Dice-4.svg" width="30" class="plain"/>
+				    <img src="img/Dice-6.svg" width="30" class="plain"/>
+				    <br/>
+				    Three of a kind
+				    <img src="img/Dice-1.svg" width="30" class="plain"/>
+				    <img src="img/Dice-1.svg" width="30" class="plain"/>
+				    <img src="img/Dice-1.svg" width="30" class="plain"/>
+				    <img src="img/Dice-5.svg" width="30" class="plain"/>
+				    <img src="img/Dice-2.svg" width="30" class="plain"/>
+				    <br/>
+				  </div>
+				    <pre class="fragment"><code class="nohighlight">def winner(h1: Hand, h2: Hand): Hand = ???</pre></code>
+				  
+				  <p class="fragment">
+				    Can you test this without Scalacheck?
+				  </p>
+				</section>
 
-<pre class="fragment"><code class="nohighlight">forAll { (head: List[String], 
-          e1: String, 
-          middle: List[String], 
-          e2: String, 
-          tail: List[String]) =>
+				<section>
+				  <h2>Testing Winning Hands</h2>
+				    <ul class="fragment">
+				      <li>Generate two random hands</li>
+				      <li>Work out the winning hand</li>
+				      <li>Check it wins</li>
+				    </ul>
+				</section>
 
-  val input = head ::: List(e1) ::: middle ::: List(e2) ::: tail
-  val expected = head ::: List(e2) ::: middle ::: List(e1) ::: tail
-
-  val output = swap(input, head.length, head.length + 1 + middle.length)
-
-  expected =? output
-}</code></pre>
-</section>
-
-<section>
-	<h2>Designing Properties</h2>
-	<h4 class="fragment">Another example: returning data from a service</h4>
-    <pre class="fragment"><code class="nohighlight">def service(id: Int): Future[String]</code></pre>
-    <pre class="fragment"><code class="nohighlight">def genPick[A, B](implicit aa: Arbitrary[A],
-                           ab: Arbitrary[B]
-    ): Gen[(Map[A, B], List[A])] = for {
-  pairs <- arbitrary[Map[A, B]]
-  keys = pairs.keySet
-  validPicks <- someOf(keys)
-} yield (pairs, validPicks.toList)</code></pre>
-<pre class="fragment"><code class="nohighlight">forAll(genPick[Int, String]) { case (mapping, ids) =>
-  
-  def service(id: Int): Future[String] = mapping.get(id) match {
-    case Some(s) => Future.succesful(s)
-    case None => Future.failed("Not in map")
+				<section>
+				  <aside class="notes">
+				    <ul>
+				      <li>Hand case class is as you would expect</li>
+				      <li>Imagine we have arbs for Hand (doesn't really matter what they are)</li>
+				    </ul>
+				  </aside>
+				  <h2>Testing Winning Hands</h2>
+				    <pre><code class="nohighlight">forAll { (h1: Hand, h2: Hand) =>
+  val h1Score = {
+       if (h1.p1 == h1.p2 &&
+           h1.p2 == h1.p3 &&
+           h1.p3 == h1.p4 &&
+           h1.p4 == h1.p5) Yahtzee
+       else if (/* and so on */)				
   }
 
-  // ...wire up the service here,
-  // assert it works as expected with the generated ids...
-}</code></pre>
-</section>
+  val h2Score = // as above
+
+  val winningHand = if(h1Score >= h2Score) h1 else h2
+
+  winner(h1, h2) ?= winningHand
+}</pre></code>
+				  <p class="fragment">
+				    Problem: we have reimplemented our application code in Scalacheck
+				  </p>
+				</section>
+
+				<section>
+				  <h2>Testing Winning Hands</h2>
+				  <ul class="fragment">
+				    <li>Generate some random dice values</li>
+				    <li>Construct known hands</li>
+				    <li>Confirm that the correct hand wins</li>
+				  </ul>
+				  <pre class="fragment"><code class="nohighlight">forAll { (y: Die, fhA: Die, fhB: Die) => fhA != fhB ==>
+  val yahtzee = Hand(y, y, y, y, y)
+  val fullHouse = Hand(fhA, fhA, fhA, fhB, fhB)
+
+  (winningHand(yahtzee, fullHouse) ?= yahtzee) &&
+  (winningHand(fullHouse, yahtzee) ?= yahtzee)
+}</pre></code>
+				  <p class="fragment">
+				    We still have untested conditions, such as:
+				    <ul class="fragment">
+				      <li>Different permutations of full house dice positions</li>
+				      <li>Comparing all winning hands with each other is quadratic!</li>
+				    </ul>
+				  </p>
+				</section>
+
+
+				<section>
+				  <aside class="notes">
+				    <ul>
+				      <li>Not implemented the ordering of the dice for 3-o-a-k for space</li>
+				      <li>You can imagine the other generators</li>
+				    </ul>
+				  </aside>
+				  <h2>Testing Winning Hands</h2>
+				  <ul class="fragment">
+				    <li>Generate a pair of <i>known hands</i></li>
+				    <li>Make sure the one that should win, wins</li>
+				  </ul>
+				  <p class="fragment">
+				    Step one: create a generator for each winning hand.
+				  </p>
+				  <pre class="fragment"><code class="nohighlight">val allDice: List[Die] = List(One, Two, Three, Four, Five, Six)
+
+val genYahtzee: Gen[Hand] = oneOf(allDice)
+                              .map(d => Hand(d, d, d, d, d))</pre></code>
+				  <pre class="fragment"><code class="nohighlight">val genThreeOfAKind: Gen[Hand] = for {
+  d1 <- oneOf(allDice)
+  d2 <- oneOf(allDice diff List(d1))
+  d3 <- oneOf(allDice diff List(d1, d2))
+} yield Hand(d1, d1, d1, d2, d3)</pre></code>
+				</section>
+				
+				<section>
+				  <h2>Testing Winning Hands</h2>
+				  <p>
+				    Step two: order the generators to reflect superior hands.
+				  </p>
+				  <pre class="fragment"><code class="nohighlight">val orderedGenerators: List[Gen[Hand]] = List(
+  genYahtzee,
+  genStraight,
+  genFullHouse,
+  genFourOfAKind,
+  genThreeOfAKind
+)</pre></code>
+				</section>
+
+
+				<section>
+				  <aside class="notes">
+				    <ul>
+				      <li>All winning gen hands beat all losing gen hands</li>
+				    </ul>
+				  </aside>
+				  <h2>Testing Winning Hands</h2>
+				  <p>
+				    Step three: Use ScalaCheck to partition the generators.
+				  </p>
+				  <pre class="fragment"><code class="nohighlight">forAll(chooseNum[Int](1, orderedGens.length - 1)) { idx =>
+
+  val (winningGens, losingGens) = orderedGens.splitAt(idx)
+
+  // ...</pre></code>
+				  <br/>
+				  <p class="fragment">
+				    Full disclosure<br/>
+				    Due to API restrictions, this is not actually how it is implemented, but the intention is exactly the same. See Github (or talk to me) for details.
+				  </p>
+				</section>
+
+				<section>
+				  <h2>Testing Winning Hands</h2>
+				  <p>
+				    Step four: Pit a hand from one of the better generators against a worse one. The better one should win.
+				  </p>
+				  <pre class="fragment"><code class="nohighlight">forAll(chooseNum[Int](1, orderedGens.length - 1)) { idx =>
+
+  val (winningGens, losingGens) = orderedGens.splitAt(idx)
+
+  forAll(oneOf(winningGens), oneOf(losingGens))
+                          { (winningHand, losingHand) =>
+
+    (winner(winningHand, losingHand) ?= winningHand) &&
+    (winner(losingHand, winningHand) ?= winningHand)
+  }
+}</pre></code>
+
+				  <pre class="fragment"><code class="nohighlight">[info] + Winning hand is chosen correctly: OK, passed 100 tests.</pre></code>
+				</section>
+
+				<section>
+				  <aside class="notes">
+				    <ul>
+				      <li>Collect takes any type, not just String</li>
+				    </ul>
+				  </aside>
+				  <h2>Testing Winning Hands</h2>
+				  <p>
+				    Bonus step: Verify what exactly was run.
+				  </p>
+				  <p class="fragment">
+				    Use the collect function:
+				  </p>
+				  <pre class="fragment"><code class="nohighlight">forAll(chooseNum[Int](1, orderedGens.length - 1)) { idx =>
+
+  val (winningGens, losingGens) = orderedGens.splitAt(idx)
+
+  forAll(oneOf(winningGens), oneOf(losingGens))
+                          { (winningHand, losingHand) =>
+
+    collect(s"${winningHand.score} vs ${losingHand.score}") {
+      (winner(winningHand, losingHand) ?= winningHand) &&
+      (winner(losingHand, winningHand) ?= winningHand)
+    }
+  }
+}</pre></code>
+				</section>
+
+				<section>
+				  <aside class="notes">
+				    <p>Notice no FH v 4OAK:</p>
+				    <ul>
+				      <li>It will appear in later runs</li>
+				      <li>Could run more tests</li>
+				      <li>Change the weightings
+				    </ul>
+				    <p>Remember this is inherently random!</p>
+				  </aside>
+				  <h2>Testing Winning Hands</h2>
+		
+				  <h4>Verifying what exactly was tested</h4>
+<pre><code class="nohighlight">[info] > Collected test data:
+[info] 20% Yahtzee vs FourOfAKind
+[info] 19% Yahtzee vs ThreeOfAKind
+[info] 16% Yahtzee vs FullHouse
+[info] 13% Yahtzee vs Straight
+[info] 10% FullHouse vs ThreeOfAKind
+[info] 9% Straight vs ThreeOfAKind
+[info] 6% FourOfAKind vs ThreeOfAKind
+[info] 6% Straight vs FourOfAKind
+[info] 1% Straight vs FullHouse
+</code></pre>
+				</section>
 				<section>
 				  <h1>Tips and Techniques</h1>
 				</section>
@@ -512,6 +648,29 @@ res1: Option[Coordinates] = Some(Coordinates(-1204620568,0,掑὏꺒))</code></p
 				</section>
 
 				<section>
+				  <aside class="notes">
+				    <ul>
+				      <li>Perhaps you want to test a service: could "wire it up" with this for successful and failed responses</li>
+				    </ul>
+				  </aside>
+				  <h2>Creating Successful and<br/> Failed Data</h2>
+<pre class="fragment"><code class="nohighlight">def genPick[A, B](implicit aa: Arbitrary[A],
+                           ab: Arbitrary[B]
+    ): Gen[(Map[A, B], List[A], List[A])] = for {
+
+  pairs <- arbitrary[Map[A, B]]
+  keys = pairs.keySet
+  validPicks <- someOf(keys)
+  anotherList <- listOf(arbitrary[A])
+  invalidPicks = anotherList.filterNot(i => keys.contains(i))
+} yield (pairs, validPicks.toList, invalidPicks)</code></pre><pre class="fragment"><code class="nohighlight">forAll(genPick[Int, String]) { case (mapping, succs, fails) =>
+  succs.forall(s => mapping.get(s).isDefined) &&
+  fails.forall(f => mapping.get(f).isEmpty)
+}
+</code></pre><pre class="fragment"><code class="nohighlight">[info] + Using genPick: OK, passed 100 tests.</code></pre>
+				</section>
+
+				<section>
 				  <h2>Integration with CI</h2>
 				  
 				  <h4>More tests on the CI server!</h4>
@@ -583,25 +742,90 @@ res9: String = 荜௥尣흑狠榇ƺ㥀</code></pre>
 				  </p>
 				</section>
 
+				<section>
+				  <h1>Boilerplate Reduction</h1>
+				</section>
 
 				<section>
-				  <h1>scalacheck-toolbox</h1>
+				  <h2>Removing Arbitraries</h2>
+				 
+				  <h4>Using scalacheck-shapeless</h4>
+				  <p class="fragment">
+				    We can use Shapeless's automatic typeclass derivation:
+				  </p>
+				  <pre class="fragment"><code class="nohighlight">"com.github.alexarchambault"
+             %% "scalacheck-shapeless_1.13" % "1.1.0-RC1"</code></pre>
+				</section>
 
-				  <p class="fragment">A library for using sensible data with ScalaCheck</p>
+				<section>
+				  <h2>Using scalacheck-shapeless</h2>
+				 
+				  <h4>Full example</h4>
+				  <pre class="fragment"><code class="nohighlight">> test:console
+[info] Starting scala interpreter...
+[info]
+Welcome to Scala version 2.11.7 (Java HotSpot(TM) 64-Bit Server VM).
+Type in expressions to have them evaluated.
+Type :help for more information.
+
+scala> case class Coordinates(x: Int, y: Int, description: String)
+defined class Coordinates
+
+scala> import org.scalacheck.Shapeless._
+import org.scalacheck.Shapeless._
+
+scala> import org.scalacheck.Arbitrary._
+import org.scalacheck.Arbitrary._</code></pre>
+				</section>
+
+				<section>
+				  <h2>Using scalacheck-shapeless</h2>
+				  
+				  <h4>Full example</h4>
+<pre class="fragment"><code class="nohighlight">scala> arbitrary[Coordinates].sample
+res0: Option[Coordinates] = Some(Coordinates(0,537278256,쪗ܘ暎))
+
+scala> arbitrary[Coordinates].sample
+res1: Option[Coordinates] = Some(Coordinates(-1204620568,0,掑὏꺒))</code></pre>
+				</section>
+
+				<section>
+				  <h2>Using scalacheck-shapeless</h2>
+				
+				  <p>
+				    This can derive <i>any</i> <code>Arbitrary[A]</code> as long as:
+				    <ul>
+				      <li class="fragment"><code>A</code> is a case class or sealed trait family of case classes</li>
+				      <li class="fragment">An implicit <code>Arbitrary</code> can be summoned for <code>A</code>'s constituent parts <i class="fragment">through automatic derivation or otherwise</i></li>
+				    </ul>
+				  </p>
+				  <p class="fragment">
+				    But beware: compile times can dramatically increase!
+				  </p>
+
+				  <p class="fragment">
+				    See Dave Gurnell's excellent talk yesterday on <a href="https://skillsmatter.com/skillscasts/9136-establishing-orbit-with-shapeless">Establishing Orbit with Shapeless</a> for more on how it works.
+				  </p>
+				</section>
+
+				<section>
+				  <h1>scalacheck-datetime</h1>
+
+				  <p class="fragment">A library for using sensible dates with ScalaCheck</p>
 
 				  <pre class="fragment"><code class="nohighlight">scala> val now = ZonedDateTime.now
-now: java.time.ZonedDateTime = 2019-09-01T10:31:40.801+01:00[Europe/London]
+now: java.time.ZonedDateTime = 2016-09-01T10:31:40.801+01:00[Europe/London]
 
 scala> val generator = genDateTimeWithinRange(now, Duration.ofDays(7))
 generator: org.scalacheck.Gen[java.time.ZonedDateTime] =
                                       org.scalacheck.Gen$$anon$5@34781a0f
 
 scala> (1 to 3).foreach(_ => println(generator.sample))
-Some(2019-09-06T06:48:42.275+01:00[Europe/London])
-Some(2019-09-05T03:20:26.826+01:00[Europe/London])
-Some(2019-09-06T06:06:35.392+01:00[Europe/London])</code></pre>
+Some(2016-09-06T06:48:42.275+01:00[Europe/London])
+Some(2016-09-05T03:20:26.826+01:00[Europe/London])
+Some(2016-09-06T06:06:35.392+01:00[Europe/London])</code></pre>
 
-				  <p class="fragment">See more at <a href="https://47deg.github.io/scalacheck-toolbox/">https://47deg.github.io/scalacheck-toolbox</a></p>
+				  <p class="fragment">See more at <a href="https://47deg.github.io/scalacheck-datetime/">https://47deg.github.io/scalacheck-datetime</a></p>
 				</section>
 
 				<section>
@@ -609,6 +833,7 @@ Some(2019-09-06T06:06:35.392+01:00[Europe/London])</code></pre>
 				  
 				  <h4>Useful links</h4>
 				  <ul class="finish">
+				    <li><a href="https://github.com/noelmarkham/lx-scalacheck">Code from this talk</li>
 				    <li><a href="https://www.scalacheck.org/">ScalaCheck website</a></li>
 				    <li><a href="https://github.com/alexarchambault/scalacheck-shapeless">scalacheck-shapeless Github</a></li>
 				    <li><a href="http://www.artima.com/shop/scalacheck">Book:
